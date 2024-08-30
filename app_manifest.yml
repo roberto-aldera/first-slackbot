@@ -10,7 +10,11 @@ features:
   slash_commands:
     - command: /greet
       url: https://ngrok-url-here/slack/commands
-      description: A test.
+      description: Let's exchange pleasantries.
+      should_escape: false
+    - command: /joke
+      url: https://ngrok-url-here/slack/commands
+      description: Tell a joke.
       should_escape: false
 oauth_config:
   scopes:

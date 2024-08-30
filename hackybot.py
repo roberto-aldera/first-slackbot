@@ -1,6 +1,7 @@
 import logging
 import os
 from flask import Flask, request, jsonify
+import requests
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from dotenv import load_dotenv
@@ -11,9 +12,13 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 
 slack_token = os.getenv("SLACK_BOT_TOKEN")
+api_ninjas_token = os.getenv("API_NINJAS_TOKEN")
 if not slack_token:
     raise ValueError(
         "No Slack Bot Token found. Set the SLACK_BOT_TOKEN environment variable.")
+if not api_ninjas_token:
+    raise ValueError(
+        "No API Ninjas Token found. Set the API_NINJAS_TOKEN environment variable.")
 
 client = WebClient(token=slack_token)
 
@@ -62,6 +67,8 @@ def slack_commands():
 
     if command == '/greet':
         handle_greet_command(channel_id, user_id)
+    if command == '/joke':
+        handle_joke_command(channel_id)
 
     return '', 200
 
@@ -71,6 +78,19 @@ def handle_greet_command(channel, user):
     """
     greeting = f"Hello, <@{user}>! Hope you're having a great day!"
     send_message(channel, greeting)
+
+def handle_joke_command(channel):
+    """
+    Joke generator.
+    """
+    api_url = 'https://api.api-ninjas.com/v1/jokes'
+    response = requests.get(api_url, headers={'X-Api-Key': api_ninjas_token}, timeout=5)
+    if response.status_code == 200:
+        response_json = response.json()
+        if response_json:
+            send_message(channel, response_json[0]['joke'])
+    else:
+        print("Error:", response.status_code, response.text)
 
 
 def send_message(channel, text):
