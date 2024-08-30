@@ -69,7 +69,8 @@ def slack_commands():
         handle_greet_command(channel_id, user_id)
     if command == '/joke':
         handle_joke_command(channel_id)
-
+    if command == '/fact':
+        handle_fact_command(channel_id)
     return '', 200
 
 def handle_greet_command(channel, user):
@@ -89,6 +90,19 @@ def handle_joke_command(channel):
         response_json = response.json()
         if response_json:
             send_message(channel, response_json[0]['joke'])
+    else:
+        print("Error:", response.status_code, response.text)
+
+def handle_fact_command(channel):
+    """
+    Fact generator.
+    """
+    api_url = 'https://api.api-ninjas.com/v1/facts'
+    response = requests.get(api_url, headers={'X-Api-Key': api_ninjas_token}, timeout=5)
+    if response.status_code == 200:
+        response_json = response.json()
+        if response_json:
+            send_message(channel, response_json[0]['fact'])
     else:
         print("Error:", response.status_code, response.text)
 

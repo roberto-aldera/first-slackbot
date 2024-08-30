@@ -16,6 +16,10 @@ features:
       url: https://ngrok-url-here/slack/commands
       description: Tell a joke.
       should_escape: false
+    - command: /fact
+      url: https://ngrok-url-here/slack/commands
+      description: Provide a fact.
+      should_escape: false
 oauth_config:
   scopes:
     bot:
