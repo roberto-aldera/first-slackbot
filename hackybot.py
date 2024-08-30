@@ -20,6 +20,9 @@ client = WebClient(token=slack_token)
 
 @app.route('/slack/events', methods=['POST'])
 def slack_events():
+    """
+    Home for all events.
+    """
     data = request.json
     print(data)
 
@@ -35,6 +38,9 @@ def slack_events():
 
 
 def handle_message(event):
+    """
+    The default response when messaged.
+    """
     user = event['user']
     text = event['text']
     channel = event['channel']
@@ -46,29 +52,31 @@ def handle_message(event):
 
 @app.route('/slack/commands', methods=['POST'])
 def slack_commands():
+    """
+    Home of all slash commands.
+    """
     data = request.form
     command = data.get('command')
     user_id = data.get('user_id')
     channel_id = data.get('channel_id')
 
     if command == '/greet':
-        return handle_greet_command(channel_id, user_id)
+        handle_greet_command(channel_id, user_id)
 
     return '', 200
 
-
 def handle_greet_command(channel, user):
-    try:
-        response = client.chat_postMessage(
-            channel=channel,
-            text=f"Hello, <@{user}>! Hope you're having a great day!"
-        )
-        return jsonify(response)
-    except SlackApiError as e:
-        return jsonify({'error': e.response['error']}), 500
+    """
+    A simple greeting response.
+    """
+    greeting = f"Hello, <@{user}>! Hope you're having a great day!"
+    send_message(channel, greeting)
 
 
 def send_message(channel, text):
+    """
+    Wrapper for chat_postMessage handling.
+    """
     try:
         client.chat_postMessage(channel=channel, text=text)
     except SlackApiError as e:
