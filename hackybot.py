@@ -89,7 +89,9 @@ def handle_joke_command(channel):
     if response.status_code == 200:
         response_json = response.json()
         if response_json:
-            send_message(channel, response_json[0]['joke'])
+            text_to_send = f"*Time for a joke* :clownshoes:\n\n" \
+                            f">{response_json[0]['joke']}"
+            send_message(channel, text_to_send)
     else:
         print("Error:", response.status_code, response.text)
 
@@ -102,7 +104,9 @@ def handle_fact_command(channel):
     if response.status_code == 200:
         response_json = response.json()
         if response_json:
-            send_message(channel, response_json[0]['fact'])
+            text_to_send = f"*Fun fact* :nerd_face:\n\n" \
+                            f">{response_json[0]['fact']}"
+            send_message(channel, text_to_send)
     else:
         print("Error:", response.status_code, response.text)
 
